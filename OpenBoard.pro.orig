@@ -1,4 +1,4 @@
-TARGET = "openboard"
+TARGET = "OpenBoard"
 TEMPLATE = app
 
 CONFIG += c++14
@@ -78,13 +78,11 @@ FORMS += resources/forms/mainWindow.ui \
    resources/forms/capturePublishing.ui \
    resources/forms/intranetPodcastPublishingDialog.ui
 
-UB_BINARY.files = openboard
 UB_ETC.files = resources/etc
 UB_I18N.files = resources/i18n/*.qm
 UB_LIBRARY.files = resources/library
 UB_FONTS.files = resources/fonts
-UB_DESKTOP.files = resources/ch.openboard.OpenBoard.desktop
-UB_ICON.files = resources/images/ch.openboard.OpenBoard.svg
+UB_THIRDPARTY_INTERACTIVE.files = thirdparty/interactive
 
 DEFINES += NO_THIRD_PARTY_WARNINGS
 DEFINES += UBVERSION=\"\\\"$${LONG_VERSION}\"\\\" \
@@ -103,6 +101,7 @@ CONFIG(release, debug|release) {
    CONFIG += warn_off
 }
 
+DESTDIR = $$BUILD_DIR/product
 OBJECTS_DIR = $$BUILD_DIR/objects
 MOC_DIR = $$BUILD_DIR/moc
 RCC_DIR = $$BUILD_DIR/rcc
@@ -137,6 +136,7 @@ win32 {
    UB_LIBRARY.path = $$DESTDIR
    UB_I18N.path = $$DESTDIR/i18n
    UB_ETC.path = $$DESTDIR
+   UB_THIRDPARTY_INTERACTIVE.path = $$DESTDIR/library
    system(md $$replace(BUILD_DIR, /, \\))
    system(echo "$$VERSION" > $$BUILD_DIR/version)
    system(echo "$$LONG_VERSION" > $$BUILD_DIR/longversion)
@@ -198,14 +198,13 @@ macx {
    QMAKE_CXXFLAGS_RELEASE += -gdwarf-2 \
        -mdynamic-no-pic
 
-   # QMAKE_CFLAGS += -fopenmp
-   # QMAKE_CXXFLAGS += -fopenmp
-   # QMAKE_LFLAGS += -fopenmp
+#    QMAKE_CFLAGS += -fopenmp
+ #   QMAKE_CXXFLAGS += -fopenmp
+  #  QMAKE_LFLAGS += -fopenmp
 
    CONTENTS_DIR = "Contents"
    RESOURCES_DIR = "Contents/Resources"
    FRAMEWORKS_DIR = "Contents/Frameworks"
-
 
    UB_ETC.files = "resources/etc"
    UB_ETC.path = "$$RESOURCES_DIR"
@@ -213,6 +212,8 @@ macx {
    UB_LIBRARY.path = "$$RESOURCES_DIR"
    UB_FONTS.files = "resources/fonts"
    UB_FONTS.path = "$$RESOURCES_DIR"
+   UB_THIRDPARTY_INTERACTIVE.files = $$files($$THIRD_PARTY_PATH/interactive/*)
+   UB_THIRDPARTY_INTERACTIVE.path = "$$RESOURCES_DIR/library/interactive"
    UB_MACX_ICNS.files = $$files(resources/macx/*.icns)
    UB_MACX_ICNS.path = "$$RESOURCES_DIR"
    UB_MACX_EXTRAS.files = "resources/macx/Save PDF to OpenBoard.workflow"
@@ -415,6 +416,7 @@ macx {
    QMAKE_BUNDLE_DATA += UB_ETC \
        UB_LIBRARY \
        UB_FONTS \
+       UB_THIRDPARTY_INTERACTIVE \
        UB_MACX_ICNS \
        UB_MACX_EXTRAS \
        SPARKLE_KEY \
@@ -431,10 +433,6 @@ macx {
 }
 
 linux-g++* {
-    isEmpty(PREFIX) {
-        PREFIX = "/usr/"
-    }
-
     CONFIG += link_prl
     LIBS += -lcrypto
     #LIBS += -lprofiler
@@ -448,12 +446,10 @@ linux-g++* {
     QMAKE_CFLAGS += -fopenmp
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -fopenmp
-    UB_BINARY.path = $$INSTALL_ROOT/$$PREFIX/bin/
-    UB_LIBRARY.path = $$INSTALL_ROOT/$$PREFIX/share/OpenBoard/
-    UB_I18N.path = $$INSTALL_ROOT/$$PREFIX/share/OpenBoard/i18n/
-    UB_ETC.path = $$INSTALL_ROOT/$$PREFIX/share/OpenBoard/
-    UB_DESKTOP.path = $$INSTALL_ROOT/$$PREFIX/share/applications/
-    UB_ICON.path = $$INSTALL_ROOT/$$PREFIX/share/icons/hicolor/scalable/apps/
+    UB_LIBRARY.path = $$DESTDIR
+    UB_I18N.path = $$DESTDIR/i18n
+    UB_ETC.path = $$DESTDIR
+    UB_THIRDPARTY_INTERACTIVE.path = $$DESTDIR/library
     system(mkdir -p $$BUILD_DIR)
     system(echo "$$VERSION" > $$BUILD_DIR/version)
     system(echo "$$LONG_VERSION" > $$BUILD_DIR/longversion)
@@ -496,13 +492,12 @@ TRANSLATIONS = resources/i18n/OpenBoard_en.ts \
    resources/i18n/OpenBoard_hu.ts \
    resources/i18n/OpenBoard_mg.ts
 
-INSTALLS = UB_BINARY \
-   UB_ETC \
+INSTALLS = UB_ETC \
    UB_I18N \
    UB_LIBRARY \
-   UB_DESKTOP \
-   UB_ICON
+   UB_THIRDPARTY_INTERACTIVE
 
 DISTFILES += \
     resources/images/moveDown.svg \
     resources/images/moveDownDisabled.svg
+

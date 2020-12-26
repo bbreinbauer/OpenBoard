@@ -29,7 +29,7 @@
 
 #include "XPDFRenderer.h"
 
-#include <QtGui>
+#include <QPainter>
 
 #include <frameworks/UBPlatformUtils.h>
 #ifndef USE_XPDF
